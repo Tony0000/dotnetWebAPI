@@ -7,6 +7,7 @@ using AutoMapper;
 using Data.Repositories.Interfaces;
 using Domain.Model;
 using dotnetWebAPI.Dtos;
+using dotnetWebAPI.Dtos.UserDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -41,7 +42,7 @@ namespace dotnetWebAPI.Controllers
             var response = Ok(new
             {
                 token,
-                user
+                user = _mapper.Map<UserDto>(user)
             });
 
             return response;
