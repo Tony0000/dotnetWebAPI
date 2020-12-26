@@ -11,7 +11,7 @@ namespace Domain.Entities
         public string Username { get; set; }
         [EmailAddress, Required]
         public string Email { get; set; }
-        public bool Status { get; set; } = true;
+        public bool Active { get; set; } = true;
         
         private string _password;
 

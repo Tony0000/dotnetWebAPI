@@ -1,5 +1,7 @@
 ﻿using System;
 using Data;
+using Data.Repositories;
+using Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
@@ -39,7 +41,8 @@ namespace dotnetWebAPI.Extesions
 
         public static void ConfigureRepositories(this IServiceCollection services)
         {
-
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRepositoryFactory, RepositoryFactory>();
         }
 
         public static void ConfigureActionFilters(this IServiceCollection services)
@@ -54,11 +57,11 @@ namespace dotnetWebAPI.Extesions
 
         public static void ConfigureAuthorization(this IServiceCollection services)
         {
-            services.AddAuthorization(config =>
-            {
+            //services.AddAuthorization(config =>
+            //{
                 
-                config.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-            });
+            //    config.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+            //});
         }
     }
 }

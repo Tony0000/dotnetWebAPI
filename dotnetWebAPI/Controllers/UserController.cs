@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
+using Data.Repositories.Interfaces;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +11,12 @@ namespace dotnetWebAPI.Controllers
     [Route("[controller]")]
     public class UserController : Controller
     {
-        private List<string> _users = new List<string>
-        {
-            "John Doe", "Jane Doe", "Mark Doe", "Clark Doe"
-        };
-
         private readonly IMapper _mapper;
+        private readonly IRepositoryFactory _repository;
 
-        public UserController(IMapper mapper)
+        public UserController(IRepositoryFactory repository, IMapper mapper)
         {
+            _repository = repository;
             _mapper = mapper;
         }
 
@@ -27,7 +24,9 @@ namespace dotnetWebAPI.Controllers
         [HttpGet]
         public ActionResult Get()
         {
-            return Ok(_users);
+            var users = _repository.Users.GetAll();
+
+            return Ok(users);
         }
 
         // GET: User/5
@@ -35,7 +34,9 @@ namespace dotnetWebAPI.Controllers
         [Route("{id}")]
         public ActionResult Get(int id)
         {
-            return Ok(_users[id]);
+            var user = _repository.Users.Find(id);
+
+            return Ok(user);
         }
 
 
@@ -43,6 +44,13 @@ namespace dotnetWebAPI.Controllers
         [HttpPost]
         public ActionResult Post(User user)
         {
+            if (user == null)
+                return BadRequest();
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
+
+            _repository.Users.Add(user);
+
             return Created("created", user);
         }
 
@@ -51,7 +59,13 @@ namespace dotnetWebAPI.Controllers
         [Route("{id}")]
         public ActionResult Delete(int id)
         {
-            return Ok(_users[id]);
+            var user = _repository.Users.Find(id);
+            if (user == null)
+                return NotFound();
+
+            _repository.Users.Delete(user);
+
+            return Ok(user);
         }
     }
 }
