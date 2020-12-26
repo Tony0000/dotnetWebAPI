@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Claims;
-using Domain.Entities;
-using Domain.Entities.Base;
+using Domain.Model;
+using Domain.Model.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 

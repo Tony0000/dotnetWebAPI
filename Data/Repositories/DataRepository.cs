@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using Data.Repositories.Interfaces;
-using Domain.Entities.Base;
+using Domain.Model.Base;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories

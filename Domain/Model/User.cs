@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Domain.Entities.Base;
+using Domain.Model.Base;
 using Microsoft.AspNetCore.Identity;
 
-namespace Domain.Entities
+namespace Domain.Model
 {
     public class User : BaseEntity
     {

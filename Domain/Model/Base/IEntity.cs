@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities.Base
+﻿namespace Domain.Model.Base
 {
     public interface IEntity
     {

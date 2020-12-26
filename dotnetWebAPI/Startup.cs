@@ -39,7 +39,7 @@ namespace dotnetWebAPI
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddHttpContextAccessor();
 
-            services.ConfigureAuthentication();
+            services.ConfigureAuthentication(Configuration);
             services.ConfigureAuthorization();
 
             services.AddControllers().AddNewtonsoftJson(s =>
@@ -62,7 +62,7 @@ namespace dotnetWebAPI
                 app.UseExceptionHandler("/Error");
             }
 
-            app.UseCors("policy");
+            //app.UseCors("policy");
 
             app.UseHttpsRedirection();
 

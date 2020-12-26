@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Xml.Linq;
-using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories.Interfaces

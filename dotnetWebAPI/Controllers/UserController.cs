@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using Data.Repositories.Interfaces;
-using Domain.Entities;
-using Microsoft.AspNetCore.Authorization;
+using Domain.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace dotnetWebAPI.Controllers
 {
     [ApiController]
-    [AllowAnonymous]
     [Route("[controller]")]
     public class UserController : Controller
     {

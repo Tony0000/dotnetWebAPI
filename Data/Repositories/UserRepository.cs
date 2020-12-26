@@ -1,5 +1,8 @@
-﻿using Data.Repositories.Interfaces;
-using Domain.Entities;
+﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
+using Data.Repositories.Interfaces;
+using Domain.Model;
 
 namespace Data.Repositories
 {
@@ -10,6 +13,11 @@ namespace Data.Repositories
         public UserRepository(WebApiDbContext context) : base(context)
         {
             _context = context;
+        }
+
+        public User First(Expression<Func<User, bool>> predicate)
+        {
+            return Fetch().FirstOrDefault(predicate);
         }
 
         public override void Delete(User entity)
