@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Domain.Model;
-using dotnetWebAPI.Dtos;
-using dotnetWebAPI.Dtos.UserDtos;
+using WebAPI.Dtos;
+using WebAPI.Dtos.UserDtos;
 
-namespace dotnetWebAPI.Profiles
+namespace WebAPI.Profiles
 {
     public class UserProfile : Profile
     {

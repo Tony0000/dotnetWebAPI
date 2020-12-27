@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace dotnetWebAPI.Dtos.UserDtos
+namespace WebAPI.Dtos.UserDtos
 {
     public class UserReadDto : UserBaseDto, IBaseReadDto
     {

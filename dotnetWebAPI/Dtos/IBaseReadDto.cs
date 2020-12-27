@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace dotnetWebAPI.Dtos
+namespace WebAPI.Dtos
 {
     public interface IBaseReadDto
     {

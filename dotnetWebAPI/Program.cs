@@ -1,11 +1,11 @@
 using System;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using Data;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-namespace dotnetWebAPI
+namespace WebAPI
 {
     public class Program
     {

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnetWebAPI", "dotnetWebAPI\dotnetWebAPI.csproj", "{4032A375-F001-4878-A3F4-7C8ACE4BB1F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPI", "dotnetWebAPI\WebAPI.csproj", "{4032A375-F001-4878-A3F4-7C8ACE4BB1F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{6062401F-FB73-4B45-B817-59C688323A1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{6062401F-FB73-4B45-B817-59C688323A1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{40149DD8-0258-46BA-8C86-65F1C75AC363}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{40149DD8-0258-46BA-8C86-65F1C75AC363}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

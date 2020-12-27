@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace dotnetWebAPI.Dtos
+namespace WebAPI.Dtos
 {
     public class LoginViewModel
     {

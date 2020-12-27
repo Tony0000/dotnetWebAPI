@@ -5,13 +5,14 @@ using Data.Repositories;
 using Data.Repositories.Interfaces;
 using Domain.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using WebAPI.ActionFilters;
 
-namespace dotnetWebAPI.Extesions
+namespace WebAPI.Extesions
 {
     public static class ServiceExtension
     {
@@ -51,7 +52,9 @@ namespace dotnetWebAPI.Extesions
 
         public static void ConfigureActionFilters(this IServiceCollection services)
         {
+            services.AddScoped<ModelValidationAttribute>();
 
+            services.AddScoped<NotFoundAttribute<User>>();
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, 

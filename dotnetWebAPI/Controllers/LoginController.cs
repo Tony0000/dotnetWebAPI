@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Data.Repositories.Interfaces;
 using Domain.Model;
-using dotnetWebAPI.Dtos;
-using dotnetWebAPI.Dtos.UserDtos;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using WebAPI.Dtos;
+using WebAPI.Dtos.UserDtos;
 
-namespace dotnetWebAPI.Controllers
+namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]

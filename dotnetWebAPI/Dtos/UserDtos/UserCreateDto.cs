@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace dotnetWebAPI.Dtos.UserDtos
+namespace WebAPI.Dtos.UserDtos
 {
     public class UserCreateDto : UserBaseDto
     {

@@ -2,10 +2,11 @@
 using AutoMapper;
 using Data.Repositories.Interfaces;
 using Domain.Model;
-using dotnetWebAPI.Dtos.UserDtos;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.ActionFilters;
+using WebAPI.Dtos.UserDtos;
 
-namespace dotnetWebAPI.Controllers
+namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -22,17 +23,18 @@ namespace dotnetWebAPI.Controllers
 
         // GET: User/
         [HttpGet]
-        public ActionResult Get()
+        public IActionResult Get()
         {
             var users = _repository.Users.GetAll();
-
+            
             return Ok(_mapper.Map<IEnumerable<UserReadDto>>(users));
         }
 
         // GET: User/5
         [HttpGet]
         [Route("{id}")]
-        public ActionResult Get(int id)
+        [ServiceFilter(typeof(NotFoundAttribute<User>))]
+        public IActionResult Get(int id)
         {
             var user = _repository.Users.Find(id);
 
@@ -42,13 +44,11 @@ namespace dotnetWebAPI.Controllers
 
         // POST: Users
         [HttpPost]
-        public ActionResult Post(UserUpdateDto userDto)
+        [ServiceFilter(typeof(ModelValidationAttribute))]
+        public IActionResult Post(UserUpdateDto userDto)
         {
             if (userDto == null)
                 return BadRequest();
-
-            if (!ModelState.IsValid)
-                return ValidationProblem(ModelState);
 
             var user = _mapper.Map<User>(userDto);
             _repository.Users.Add(user);
@@ -59,7 +59,8 @@ namespace dotnetWebAPI.Controllers
         // DELETE: User/5
         [HttpDelete]
         [Route("{id}")]
-        public ActionResult Delete(int id)
+        [ServiceFilter(typeof(NotFoundAttribute<User>))]
+        public IActionResult Delete(int id)
         {
             var user = _repository.Users.Find(id);
             if (user == null)
