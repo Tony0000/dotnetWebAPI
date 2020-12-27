@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
+using WebAPI.ActionResult;
 
 namespace WebAPI.ActionFilters
 {
@@ -8,7 +8,7 @@ namespace WebAPI.ActionFilters
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (!context.ModelState.IsValid)
-                context.Result = new UnprocessableEntityObjectResult(context.ModelState);
+                context.Result = new ValidationFailedObjectResult(context.ModelState);
         }
     }
 }
