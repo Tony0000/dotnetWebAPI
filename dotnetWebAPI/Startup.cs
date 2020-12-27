@@ -35,6 +35,9 @@ namespace WebAPI
             
             services.ConfigureRepositories();
             services.ConfigureActionFilters();
+            services.Configure<ApiBehaviorOptions>(options => 
+                options.SuppressModelStateInvalidFilter = true);
+
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddHttpContextAccessor();
