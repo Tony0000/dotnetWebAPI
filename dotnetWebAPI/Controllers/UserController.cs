@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using Data.Repositories.Interfaces;
 using Domain.Model;
@@ -10,7 +11,7 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         private readonly IMapper _mapper;
         private readonly IRepositoryFactory _repository;
@@ -23,35 +24,39 @@ namespace WebAPI.Controllers
 
         // GET: User/
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var users = _repository.Users.GetAll();
-            
-            return Ok(_mapper.Map<IEnumerable<UserReadDto>>(users));
+            var users = await _repository.Users.GetAllAsync(track:false);
+
+            var usersDto = _mapper.Map<IEnumerable<UserReadDto>>(users);
+
+            return Ok(usersDto);
         }
 
         // GET: User/5
         [HttpGet]
         [Route("{id}")]
         [ServiceFilter(typeof(NotFoundAttribute<User>))]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var user = _repository.Users.Find(id);
-
-            return Ok(_mapper.Map<UserReadDto>(user));
+            var user = await _repository.Users.GetAsync(id, track:false);
+            var userDto = _mapper.Map<UserReadDto>(user);
+            
+            return Ok(userDto);
         }
 
 
         // POST: Users
         [HttpPost]
         [ServiceFilter(typeof(ModelValidationAttribute))]
-        public IActionResult Post(UserUpdateDto userDto)
+        public async Task<IActionResult> Post(UserUpdateDto userDto)
         {
             if (userDto == null)
                 return BadRequest();
 
             var user = _mapper.Map<User>(userDto);
             _repository.Users.Add(user);
+            await _repository.SaveChangesAsync();
 
             return Created("created", _mapper.Map<UserReadDto>(user));
         }
@@ -60,13 +65,12 @@ namespace WebAPI.Controllers
         [HttpDelete]
         [Route("{id}")]
         [ServiceFilter(typeof(NotFoundAttribute<User>))]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var user = _repository.Users.Find(id);
-            if (user == null)
-                return NotFound();
+            var user = await _repository.Users.GetAsync(id);
 
             _repository.Users.Delete(user);
+            await _repository.SaveChangesAsync();
 
             return Ok(_mapper.Map<UserReadDto>(user));
         }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Data.Repositories.Interfaces;
 using Domain.Model.Base;
 using Microsoft.EntityFrameworkCore;
@@ -22,9 +24,10 @@ namespace Data.Repositories
             _objectSet = _context.Set<T>();
         }
 
-        public IQueryable<T> Fetch()
+        public IQueryable<T> Fetch(bool track = true)
         {
-            return _objectSet.Include(x => x.UpdatedBy).Include(x => x.CreatedBy);
+            var query = _objectSet.Include(x => x.UpdatedBy).Include(x => x.CreatedBy);
+            return track ? query : query.AsNoTracking();
         }
 
         public virtual IQueryable<T> GetAll()
@@ -37,11 +40,34 @@ namespace Data.Repositories
             return Fetch().FirstOrDefault(x => x.Id == id);
         }
 
+        public IQueryable<T> Find(Expression<Func<T, bool>> predicate, bool track = true)
+        {
+            return track ?
+                _objectSet.Where(predicate) 
+                : _objectSet.Where(predicate).AsNoTracking();
+        }
+
         public T First(Expression<Func<T, bool>> predicate, string relatedEntity = null)
         {
             return string.IsNullOrEmpty(relatedEntity) ?
                 Fetch().FirstOrDefault(predicate)
                 : Fetch().Include(relatedEntity).FirstOrDefault(predicate);
+        }
+
+        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, bool track)
+        {
+            return await Find(predicate, track).ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync(bool track = true)
+        {
+            return await Fetch(track).ToListAsync();
+        }
+
+
+        public async Task<T> GetAsync(int id, bool track = true)
+        {
+            return await Find(x => x.Id == id).FirstOrDefaultAsync();
         }
 
         public bool Exists(Expression<Func<T, bool>> predicate)

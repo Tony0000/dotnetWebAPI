@@ -1,4 +1,5 @@
-﻿using Data.Repositories.Interfaces;
+﻿using System.Threading.Tasks;
+using Data.Repositories.Interfaces;
 
 namespace Data.Repositories
 {
@@ -15,9 +16,9 @@ namespace Data.Repositories
         public IUserRepository Users
             => _userRepository ??= new UserRepository(_repoContext);
 
-        public void SaveChanges()
+        public Task SaveChangesAsync()
         {
-            _repoContext.SaveChanges();
+            return _repoContext.SaveChangesAsync();
         }
     }
 }

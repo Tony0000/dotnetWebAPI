@@ -6,7 +6,6 @@ namespace Data.Repositories.Interfaces
 {
     public interface IUserRepository : IRepository<User>
     {
-        public User First(Expression<Func<User, bool>> predicate);
-
+        User First(Expression<Func<User, bool>> predicate);
     }
 }

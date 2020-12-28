@@ -1,8 +1,10 @@
-﻿namespace Data.Repositories.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace Data.Repositories.Interfaces
 {
     public interface IRepositoryFactory
     {
         IUserRepository Users { get; }
-        void SaveChanges();
+        Task SaveChangesAsync();
     }
 }

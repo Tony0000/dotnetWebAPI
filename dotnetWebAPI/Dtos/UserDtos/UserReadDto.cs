@@ -2,7 +2,7 @@
 
 namespace WebAPI.Dtos.UserDtos
 {
-    public class UserReadDto : UserBaseDto, IBaseReadDto
+    public class UserReadDto : UserUpdateDto, IBaseReadDto
     {
         public int? CreatedById { get; set; }
         public UserAuditDto CreatedBy { get; set; }
