@@ -14,3 +14,8 @@ You can find the full list of features bellow:
  - Custom Action Result for errors
  - Data transfer object (DTO)
  - Token Jwt with default expiration in 24 hours
+
+## Requirements 
+ Have SQLEXPRESS 2013 or above installed on the machine (edit ConnectionString in appsettings.json accordingly). 
+ The Startup class will run all pending migrations so there's no need to 'update-database' through nuget console. 
+ Also, table Users will be seeded with some records after first launch.
