@@ -42,9 +42,7 @@ namespace Data.Repositories
 
         public IQueryable<T> Find(Expression<Func<T, bool>> predicate, bool track = true)
         {
-            return track ?
-                _objectSet.Where(predicate) 
-                : _objectSet.Where(predicate).AsNoTracking();
+            return Fetch(track).Where(predicate);
         }
 
         public T First(Expression<Func<T, bool>> predicate, string relatedEntity = null)
