@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories.Interfaces
 {
-    public interface IRepository<T> : IDisposable where T : class
+    public interface IRepository<T> : IRepositoryExtension<T>, IDisposable where T : class
     {
         DbContext CurrentDbContext { get; }
         IQueryable<T> Fetch(bool track);
-        IQueryable<T> GetAll();
+        IQueryable<T> GetAll(bool track);
         T Find(int id);
         IQueryable<T> Find(Expression<Func<T, bool>> predicate, bool track);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, bool track);

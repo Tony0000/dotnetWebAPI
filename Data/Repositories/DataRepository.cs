@@ -9,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
-    public class DataRepository<T> : IRepository<T> where T : BaseEntity
+    public class DataRepository<T> : RepositoryExtension<T>, IRepository<T> 
+        where T : BaseEntity
     {
         private DbContext _context;
         protected DbSet<T> _objectSet;
@@ -30,9 +31,9 @@ namespace Data.Repositories
             return track ? query : query.AsNoTracking();
         }
 
-        public virtual IQueryable<T> GetAll()
+        public virtual IQueryable<T> GetAll(bool track = true)
         {
-            return Fetch();
+            return Fetch(track);
         }
 
         public virtual T Find(int id)

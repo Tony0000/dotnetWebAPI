@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Data.Repositories.Interfaces;
@@ -25,9 +27,18 @@ namespace WebAPI.Controllers
 
         // GET: User/
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
-            var users = await _repository.Users.GetAllAsync(track:false);
+            var users = _repository.Users.GetAll(track:false);
+            try
+            {
+                users = _repository.Users.Search(Request.Query, users);
+                users = _repository.Users.Sort(Request.Query, users);
+            }
+            catch (Exception e)
+            {
+                return new BadRequestObjectResult(new { error = e.GetType().ToString(), message = e.Message});
+            }
 
             var usersDto = _mapper.Map<IEnumerable<UserReadDto>>(users);
 
