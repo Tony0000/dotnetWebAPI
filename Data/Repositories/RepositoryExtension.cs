@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
+using Data.Helper;
 using Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 
@@ -9,7 +11,7 @@ namespace Data.Repositories
 {
     public class RepositoryExtension<T> : IRepositoryExtension<T> where T : class
     {
-        public IQueryable<T> GetPage(IQueryCollection query, IQueryable<T> results)
+        public async Task<IPagedResult<T>> GetPage(IQueryCollection query, IQueryable<T> results)
         {
             var pageSize = 10;
             if (query.ContainsKey("max"))
@@ -17,8 +19,9 @@ namespace Data.Repositories
             var offset = 0;
             if (query.ContainsKey("offset"))
                 offset = int.Parse(query["offset"]);
-            
-            return results.Skip(offset).Take(pageSize);
+
+            var pageNumber = (offset / pageSize) + 1;
+            return await PagedResult<T>.ToPagedResult(results, pageNumber, pageSize);
         }
 
         public IQueryable<T> Sort(IQueryCollection query, IQueryable<T> results)

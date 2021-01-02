@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using Data;
+using Data.Helper;
 using Data.Repositories;
 using Data.Repositories.Interfaces;
 using Domain.Model;

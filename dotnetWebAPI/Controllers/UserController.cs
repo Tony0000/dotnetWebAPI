@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Data.Repositories.Interfaces;
 using Domain.Model;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using WebAPI.ActionFilters;
 using WebAPI.Dtos.UserDtos;
 
@@ -27,7 +27,7 @@ namespace WebAPI.Controllers
 
         // GET: User/
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             var users = _repository.Users.GetAll(track:false);
             try
@@ -40,7 +40,11 @@ namespace WebAPI.Controllers
                 return new BadRequestObjectResult(new { error = e.GetType().ToString(), message = e.Message});
             }
 
-            var usersDto = _mapper.Map<IEnumerable<UserReadDto>>(users);
+            var pagedUsers = await _repository.Users.GetPage(Request.Query, users);
+            var usersDto = _mapper.Map<IEnumerable<UserReadDto>>(pagedUsers);
+
+            Response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
+            Response.Headers.Add("Pagination", JsonConvert.SerializeObject(pagedUsers.Metadata));
 
             return Ok(usersDto);
         }
