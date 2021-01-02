@@ -50,8 +50,12 @@ namespace WebAPI.Controllers
 
         private User AuthenticateUser(LoginViewModel credentials)
         {
-            var user = _repository.First(x => x.Username.Equals(credentials.Username));
-            return (user.ConfirmPassword(credentials.Password) && user.Active) ? user : null;
+            var user = _repository.First(x => x.Username.Equals(credentials.Username) && x.Active);
+
+            if (user == null || !user.ConfirmPassword(credentials.Password))
+                return null;
+
+            return user;
         }
 
         private string CreateTokenJwt(User user)
