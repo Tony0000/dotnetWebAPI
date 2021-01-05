@@ -7,20 +7,19 @@ namespace Data.Helper
 {
     public class ClauseBuilder : IClauseBuilder
     {
-        public string EntityName { get; set; }
-        public string PropertyName { get; set; }
-        public string PropertyValue { get; set; }
+        private string EntityName { get; }
+        private string PropertyName { get; set; }
+        private string PropertyValue { get; set; }
 
-        public ClauseBuilder(string entityName, string propertyName, string propertyValue)
+        public ClauseBuilder(string entityName)
         {
             EntityName = entityName;
-            PropertyName = propertyName;
-            PropertyValue = propertyValue;
         }
 
-        public string GetClause(PropertyInfo property)
+        public string GetClause(PropertyInfo property, string propertyName, string propertyValue)
         {
-            
+            PropertyName = propertyName;
+            PropertyValue = propertyValue;
             var pType = property.PropertyType;
 
             if (pType == typeof(string))
@@ -73,7 +72,7 @@ namespace Data.Helper
             {
                 return (T)Convert.ChangeType(str, typeof(T));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new InvalidCastException(
                     $"Invalid value for attribute '{PropertyName}' in entity '{EntityName}'");

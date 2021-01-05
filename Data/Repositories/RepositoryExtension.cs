@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Data.Helper;
@@ -47,14 +46,15 @@ namespace Data.Repositories
             var searchParams = query.ToList();
             searchParams.RemoveAll(kv => nonSearchable.Contains(kv.Key));
 
+            var clauseBuilder = new ClauseBuilder(typeof(T).Name);
             foreach (var (propName, value) in searchParams)
             {
                 var property = typeof(T).GetProperty(propName);
                 if (property == null)
                     throw new KeyNotFoundException(
                         $"Attribute '{propName}' not found in entity '{typeof(T).Name}'");
-                
-                var clause = new ClauseBuilder(typeof(T).Name, propName, value).GetClause(property);
+
+                var clause = clauseBuilder.GetClause(property, propName, value);
 
                 if (!string.IsNullOrEmpty(clause))
                     results = results.WhereDynamic(x => clause);

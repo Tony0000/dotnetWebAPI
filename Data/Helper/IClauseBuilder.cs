@@ -5,7 +5,7 @@ namespace Data.Helper
 {
     public interface IClauseBuilder
     {
-        public string GetClause(PropertyInfo property);
+        public string GetClause(PropertyInfo property, string propertyName, string propertyValue);
         public string GetStringLikeClause();
         public string GetStringEqualClause();
         public string GetEqualClause(string value = null);
