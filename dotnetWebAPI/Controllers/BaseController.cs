@@ -17,6 +17,15 @@ namespace WebAPI.Controllers
             return new ValidationFailedObjectResult(modelState);
         }
 
-
+        [NonAction]
+        public virtual BadRequestObjectResult BadRequest(
+            [ActionResultObjectValue] Exception e)
+        {
+            return new BadRequestObjectResult(new
+            {
+                type = e.GetType(), 
+                message = e.Message
+            });
+        }
     }
 }

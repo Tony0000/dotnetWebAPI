@@ -37,7 +37,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception e)
             {
-                return new BadRequestObjectResult(new { error = e.GetType().ToString(), message = e.Message});
+                return BadRequest(e);
             }
 
             var pagedUsers = await _repository.Users.GetPage(Request.Query, users);
@@ -81,7 +81,7 @@ namespace WebAPI.Controllers
         [Route("{id}")]
         [ServiceFilter(typeof(NotFoundAttribute<User>))]
         [ServiceFilter(typeof(ModelValidationAttribute))]
-        public IActionResult Put(int id, UserUpdateDto userDto)
+        public async Task<IActionResult> Put(int id, UserUpdateDto userDto)
         {
             if (id != userDto.Id)
                 return BadRequest();
@@ -92,10 +92,10 @@ namespace WebAPI.Controllers
                 return ValidationFailed(ModelState);
             }
 
-            var user = _repository.Users.Find(id);
+            var user = await _repository.Users.FindAsync(x => x.Id == id, track:true);
             _mapper.Map(userDto, user);
 
-            _repository.Users.SaveChanges();
+            await _repository.SaveChangesAsync();
 
             return Ok(_mapper.Map<UserReadDto>(user));
         }
@@ -103,9 +103,9 @@ namespace WebAPI.Controllers
         [HttpPatch]
         [Route("{id}")]
         [ServiceFilter(typeof(NotFoundAttribute<User>))]
-        public IActionResult Patch(int id, JsonPatchDocument<UserUpdateDto> docPatch)
+        public async Task<IActionResult> Patch(int id, JsonPatchDocument<UserUpdateDto> docPatch)
         {
-            var storedUser = _repository.Users.Find(id);
+            var storedUser = await _repository.Users.FindAsync(x => x.Id == id, track: true);
             var userToBePatched = _mapper.Map<UserUpdateDto>(storedUser);
             
             docPatch.ApplyTo(userToBePatched, ModelState);
@@ -115,7 +115,7 @@ namespace WebAPI.Controllers
                 return ValidationFailed(ModelState);
 
             _mapper.Map(userToBePatched, storedUser);
-            _repository.Users.SaveChanges();
+            await _repository.SaveChangesAsync();
 
             return Ok(_mapper.Map<UserReadDto>(storedUser));
         }
