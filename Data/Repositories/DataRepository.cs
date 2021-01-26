@@ -31,7 +31,7 @@ namespace Data.Repositories
             return track ? query : query.AsNoTracking();
         }
 
-        public virtual IQueryable<T> GetAll(bool track = true)
+        public virtual IQueryable<T> GetAll(bool track = false)
         {
             return Fetch(track);
         }
@@ -58,7 +58,7 @@ namespace Data.Repositories
             return await Find(predicate, track).ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(bool track = true)
+        public async Task<IEnumerable<T>> GetAllAsync(bool track = false)
         {
             return await Fetch(track).ToListAsync();
         }

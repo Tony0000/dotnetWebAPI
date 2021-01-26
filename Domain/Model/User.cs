@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Domain.Model.Base;
+using Domain.Model.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Model
@@ -12,7 +13,8 @@ namespace Domain.Model
         [EmailAddress, Required]
         public string Email { get; set; }
         public bool Active { get; set; } = true;
-        
+        public Role Role { get; set; } = Role.Employee;
+
         private string _password;
 
         public string Password
