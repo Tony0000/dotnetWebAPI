@@ -16,7 +16,7 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class LoginController : Controller
+    public class LoginController : BaseController
     {
         private readonly IConfiguration _config;
         private readonly IUserRepository _repository;
@@ -31,14 +31,14 @@ namespace WebAPI.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult Login(LoginViewModel loginModel)
+        public IActionResult Login(LoginModel loginModel)
         {
             var user = AuthenticateUser(loginModel);
 
             if (user == null) 
                 return Unauthorized();
 
-            var token = CreateTokenJwt(user);
+            var token = CreateTokenJwt(user, loginModel.RememberMe);
             var response = Ok(new
             {
                 token,
@@ -48,7 +48,7 @@ namespace WebAPI.Controllers
             return response;
         }
 
-        private User AuthenticateUser(LoginViewModel credentials)
+        private User AuthenticateUser(LoginModel credentials)
         {
             var user = _repository.First(x => x.Username.Equals(credentials.Username) && x.Active);
 
@@ -58,8 +58,9 @@ namespace WebAPI.Controllers
             return user;
         }
 
-        private string CreateTokenJwt(User user)
+        private string CreateTokenJwt(User user, bool rememberMe)
         {
+            var timeToLive = rememberMe? int.Parse(_config["Jwt:TTL"]) : 1;
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
@@ -72,7 +73,7 @@ namespace WebAPI.Controllers
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(24),
+                expires: DateTime.Now.AddDays(timeToLive),
                 signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
