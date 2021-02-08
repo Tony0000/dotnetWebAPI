@@ -1,19 +1,17 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using Domain.Model.Base;
-using Domain.Model.Enums;
+using Domain.Common;
+using Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 
-namespace Domain.Model
+namespace Domain.Entities
 {
-    public class User : BaseEntity
+    public class User : AuditableEntity
     {
-        [MinLength(6), MaxLength(20), Required]
+        public int Id { get; set; }
         public string Username { get; set; }
-        [EmailAddress, Required]
         public string Email { get; set; }
-        public bool Active { get; set; } = true;
-        public Role Role { get; set; } = Role.Employee;
+        public bool Active { get; set; }
+        public Role Role { get; set; }
 
         private string _password;
 

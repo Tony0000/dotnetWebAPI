@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Domain.Model;
+using Domain.Entities;
 
-namespace Data.Repositories.Interfaces
+namespace Persistence.Repositories.Interfaces
 {
     public interface IUserRepository : IRepository<User>
     {

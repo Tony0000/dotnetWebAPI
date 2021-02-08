@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
-namespace Data.Helper
+namespace Persistence.Helper
 {
     public class ClauseBuilder : IClauseBuilder
     {

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 
-namespace Data.Helper
+namespace Persistence.Helper
 {
     public interface IPagedResult<T> where T : class
     {

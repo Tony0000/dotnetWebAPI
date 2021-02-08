@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using Application.Common.Interfaces;
 
-namespace Data.Repositories.Interfaces
+namespace Persistence.Repositories.Interfaces
 {
-    public interface IRepository<T> : IRepositoryExtension<T>, IDisposable where T : class
+    public interface IRepository<T> : IRepositoryExtension<T> where T : class
     {
-        DbContext CurrentDbContext { get; }
+        IWebApiDbContext CurrentDbContext { get; }
         IQueryable<T> Fetch(bool track);
         IQueryable<T> GetAll(bool track);
         T Find(int id);
@@ -18,11 +18,7 @@ namespace Data.Repositories.Interfaces
         Task<IEnumerable<T>> GetAllAsync(bool track = true);
         Task<T> GetAsync(int id, bool track = true);
         void Add(T entity);
-        void Update(T entity);
         void Delete(T entity);
-        void Attach(T entity);
-        void Detach(T entity);
-        void SaveChanges();
         public bool Exists(Expression<Func<T, bool>> predicate);
     }
 }

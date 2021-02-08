@@ -8,12 +8,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Persistence;
 using WebAPI.Extesions;
 
 namespace WebAPI
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+        public IHostEnvironment Environment { get; }
+
         public Startup(IHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -23,21 +27,16 @@ namespace WebAPI
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
+            Environment = env;
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.ConfigureCors(Configuration);
-            services.ConfigureSqlContext(Configuration);
-            
+            services.AddPersistence(Configuration);
             services.ConfigureRepositories();
-            services.ConfigureActionFilters();
-            services.Configure<ApiBehaviorOptions>(options => 
-                options.SuppressModelStateInvalidFilter = true);
-
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddHttpContextAccessor();

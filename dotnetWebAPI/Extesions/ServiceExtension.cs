@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Text;
-using Data;
-using Data.Helper;
-using Data.Repositories;
-using Data.Repositories.Interfaces;
-using Domain.Model;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using WebAPI.ActionFilters;
+using Persistence;
+using Persistence.Repositories;
+using Persistence.Repositories.Interfaces;
 
 namespace WebAPI.Extesions
 {
@@ -31,6 +29,12 @@ namespace WebAPI.Extesions
             //});
         }
 
+        public static void ConfigureRepositories(this IServiceCollection services)
+        {
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRepositoryFactory, RepositoryFactory>();
+        }
+
         public static void ConfigureSqlContext(this IServiceCollection services, 
             IConfiguration config)
         {
@@ -43,19 +47,6 @@ namespace WebAPI.Extesions
             services.AddDbContext<WebApiDbContext>(
                 opt => opt.UseSqlServer(connString, b => b.MigrationsAssembly(assemblyName))
             );
-        }
-
-        public static void ConfigureRepositories(this IServiceCollection services)
-        {
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IRepositoryFactory, RepositoryFactory>();
-        }
-
-        public static void ConfigureActionFilters(this IServiceCollection services)
-        {
-            services.AddScoped<ModelValidationAttribute>();
-
-            services.AddScoped<NotFoundAttribute<User>>();
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Data.Helper
+namespace Persistence.Helper
 {
     public interface IClauseBuilder
     {

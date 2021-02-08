@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Data.Helper;
 using Microsoft.AspNetCore.Http;
+using Persistence.Helper;
 
-namespace Data.Repositories.Interfaces
+namespace Persistence.Repositories.Interfaces
 {
     public interface IRepositoryExtension<T> where T : class
     {

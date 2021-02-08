@@ -1,14 +1,15 @@
 ﻿using System.Threading.Tasks;
-using Data.Repositories.Interfaces;
+using Application.Common.Interfaces;
+using Persistence.Repositories.Interfaces;
 
-namespace Data.Repositories
+namespace Persistence.Repositories
 {
     public class RepositoryFactory : IRepositoryFactory
     {
-        private readonly WebApiDbContext _repoContext;
+        private readonly IWebApiDbContext _repoContext;
         private IUserRepository _userRepository;
 
-        public RepositoryFactory(WebApiDbContext repositoryContext)
+        public RepositoryFactory(IWebApiDbContext repositoryContext)
         {
             _repoContext = repositoryContext;
         }
@@ -16,9 +17,9 @@ namespace Data.Repositories
         public IUserRepository Users
             => _userRepository ??= new UserRepository(_repoContext);
 
-        public Task SaveChangesAsync()
+        public async Task<int> SaveChangesAsync()
         {
-            return _repoContext.SaveChangesAsync();
+            return await _repoContext.SaveChangesAsync();
         }
     }
 }

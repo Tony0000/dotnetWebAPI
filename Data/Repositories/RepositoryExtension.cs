@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Data.Helper;
-using Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Persistence.Helper;
+using Persistence.Repositories.Interfaces;
 
-namespace Data.Repositories
+namespace Persistence.Repositories
 {
     public class RepositoryExtension<T> : IRepositoryExtension<T> where T : class
     {

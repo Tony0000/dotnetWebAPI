@@ -1,15 +1,10 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Entities;
 
-namespace Domain.Model.Base
+namespace Domain.Common
 {
-    public class BaseEntity : IEntity
+    public class AuditableEntity
     {
-        [Key]
-        [ScaffoldColumn(false)]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
         public int? CreatedById { get; set; }
         public virtual User CreatedBy { get; set; }
         public DateTime? CreatedAt { get; set; }

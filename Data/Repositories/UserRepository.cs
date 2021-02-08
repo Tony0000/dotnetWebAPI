@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using Data.Repositories.Interfaces;
-using Domain.Model;
+using Application.Common.Interfaces;
+using Domain.Entities;
+using Persistence.Repositories.Interfaces;
 
-namespace Data.Repositories
+namespace Persistence.Repositories
 {
     public class UserRepository : DataRepository<User>, IUserRepository
     {
-        private WebApiDbContext _context;
+        private IWebApiDbContext _context;
 
-        public UserRepository(WebApiDbContext context) : base(context)
+        public UserRepository(IWebApiDbContext context) : base(context)
         {
             _context = context;
         }

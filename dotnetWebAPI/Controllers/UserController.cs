@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Application.Common.Interfaces;
 using AutoMapper;
-using Data.Repositories.Interfaces;
-using Domain.Model;
+using Domain.Entities;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using WebAPI.ActionFilters;
+using Persistence.Repositories.Interfaces;
 using WebAPI.Dtos.UserDtos;
 
 namespace WebAPI.Controllers
@@ -19,10 +19,10 @@ namespace WebAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IRepositoryFactory _repository;
 
-        public UserController(IRepositoryFactory repository, IMapper mapper)
+        public UserController(IMapper mapper, IRepositoryFactory repository)
         {
-            _repository = repository;
             _mapper = mapper;
+            _repository = repository;
         }
 
         // GET: User/
@@ -52,7 +52,6 @@ namespace WebAPI.Controllers
         // GET: User/5
         [HttpGet]
         [Route("{id}")]
-        [ServiceFilter(typeof(NotFoundAttribute<User>))]
         public async Task<IActionResult> Get(int id)
         {
             var user = await _repository.Users.GetAsync(id, track:false);
@@ -64,7 +63,6 @@ namespace WebAPI.Controllers
 
         // POST: Users
         [HttpPost]
-        [ServiceFilter(typeof(ModelValidationAttribute))]
         public async Task<IActionResult> Post(UserUpdateDto userDto)
         {
             if (userDto == null)
@@ -79,8 +77,6 @@ namespace WebAPI.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        [ServiceFilter(typeof(NotFoundAttribute<User>))]
-        [ServiceFilter(typeof(ModelValidationAttribute))]
         public async Task<IActionResult> Put(int id, UserUpdateDto userDto)
         {
             if (id != userDto.Id)
@@ -102,7 +98,6 @@ namespace WebAPI.Controllers
 
         [HttpPatch]
         [Route("{id}")]
-        [ServiceFilter(typeof(NotFoundAttribute<User>))]
         public async Task<IActionResult> Patch(int id, JsonPatchDocument<UserUpdateDto> docPatch)
         {
             var storedUser = await _repository.Users.FindAsync(x => x.Id == id, track: true);
@@ -123,7 +118,6 @@ namespace WebAPI.Controllers
         // DELETE: User/5
         [HttpDelete]
         [Route("{id}")]
-        [ServiceFilter(typeof(NotFoundAttribute<User>))]
         public async Task<IActionResult> Delete(int id)
         {
             var user = await _repository.Users.GetAsync(id);

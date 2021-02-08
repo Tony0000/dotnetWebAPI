@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Claims;
-using Domain.Model;
-using Domain.Model.Base;
-using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
+using Application.Common.Interfaces;
+using Domain.Common;
+using Domain.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
-namespace Data
+namespace Persistence
 {
-    public class WebApiDbContext : DbContext
+    public class WebApiDbContext : DbContext, IWebApiDbContext
     {
-        private IHttpContextAccessor _accessor;
+        private readonly IHttpContextAccessor _accessor;
         public WebApiDbContext(DbContextOptions<WebApiDbContext> options,
             IHttpContextAccessor accessor) : base(options)
         {
@@ -21,46 +24,36 @@ namespace Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.CreatedBy)
-                .WithMany()
-                .HasForeignKey(u => u.CreatedById);
-
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.UpdatedBy)
-                .WithMany()
-                .HasForeignKey(u => u.UpdatedById);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(WebApiDbContext).Assembly);
 
             base.OnModelCreating(modelBuilder);
         }
 
-        public override int SaveChanges()
+        public Task<int> SaveChangesAsync()
         {
             var currentUser = GetUser();
             var currentUserId = currentUser?.Id;
-            var entities = ChangeTracker.Entries().Where(
-                x =>
-                    x.Entity is BaseEntity
-                    && (x.State == EntityState.Added || x.State == EntityState.Modified));
 
-            foreach (var entry in entities)
+            foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
             {
-                if (entry.State == EntityState.Added)
+                switch (entry.State)
                 {
-                    ((BaseEntity)entry.Entity).CreatedById = currentUserId;
-                    ((BaseEntity)entry.Entity).CreatedAt = DateTime.Now;
-                }
-                else
-                {
-                    entry.Property(nameof(BaseEntity.CreatedById)).IsModified = false;
-                    entry.Property(nameof(BaseEntity.CreatedAt)).IsModified = false;
+                    case EntityState.Added:
+                        entry.Entity.CreatedById = currentUserId;
+                        entry.Entity.CreatedAt = DateTime.Now;
+                        break;
 
-                    ((BaseEntity)entry.Entity).UpdatedById = currentUserId;
-                    ((BaseEntity)entry.Entity).UpdatedAt = DateTime.Now;
+                    case EntityState.Modified:
+                        entry.Property(nameof(AuditableEntity.CreatedById)).IsModified = false;
+                        entry.Property(nameof(AuditableEntity.CreatedAt)).IsModified = false;
+
+                        entry.Entity.UpdatedById = currentUserId;
+                        entry.Entity.UpdatedAt = DateTime.Now;
+                        break;
                 }
             }
 
-            return base.SaveChanges();
+            return base.SaveChangesAsync();
         }
 
         private User GetUser()

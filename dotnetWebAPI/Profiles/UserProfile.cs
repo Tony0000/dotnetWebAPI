@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Domain.Model;
+using Domain.Entities;
 using WebAPI.Dtos;
 using WebAPI.Dtos.UserDtos;
 

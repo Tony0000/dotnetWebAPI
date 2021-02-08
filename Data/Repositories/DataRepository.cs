@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Data.Repositories.Interfaces;
-using Domain.Model.Base;
+using Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Repositories.Interfaces;
 
-namespace Data.Repositories
+namespace Persistence.Repositories
 {
     public class DataRepository<T> : RepositoryExtension<T>, IRepository<T> 
-        where T : BaseEntity
+        where T : class
     {
-        private DbContext _context;
+        private readonly IWebApiDbContext _context;
         protected DbSet<T> _objectSet;
 
-        public DbContext CurrentDbContext => _context;
+        public IWebApiDbContext CurrentDbContext => _context;
 
-        DbContext IRepository<T>.CurrentDbContext => CurrentDbContext;
+        IWebApiDbContext IRepository<T>.CurrentDbContext => CurrentDbContext;
 
-        protected DataRepository(DbContext context)
+        protected DataRepository(IWebApiDbContext context)
         {
             _context = context;
             _objectSet = _context.Set<T>();
@@ -27,8 +27,7 @@ namespace Data.Repositories
 
         public IQueryable<T> Fetch(bool track = true)
         {
-            var query = _objectSet.Include(x => x.UpdatedBy).Include(x => x.CreatedBy);
-            return track ? query : query.AsNoTracking();
+            return track ? _objectSet : _objectSet.AsNoTracking();
         }
 
         public virtual IQueryable<T> GetAll(bool track = false)
@@ -38,7 +37,7 @@ namespace Data.Repositories
 
         public virtual T Find(int id)
         {
-            return Fetch().FirstOrDefault(x => x.Id == id);
+            return Fetch().FirstOrDefaultDynamic(x => $"x.Id == {id}");
         }
 
         public IQueryable<T> Find(Expression<Func<T, bool>> predicate, bool track = true)
@@ -66,7 +65,7 @@ namespace Data.Repositories
 
         public async Task<T> GetAsync(int id, bool track = true)
         {
-            return await Find(x => x.Id == id).FirstOrDefaultAsync();
+            return await Fetch(track).WhereDynamic(x => $"x.Id = {id}").FirstOrDefaultAsync();
         }
 
         public bool Exists(Expression<Func<T, bool>> predicate)
@@ -80,17 +79,6 @@ namespace Data.Repositories
                 throw new ArgumentNullException(nameof(entity), "Cannot store a null entity");
 
             _objectSet.Add(entity);
-        }
-
-        public void Update(T entity)
-        {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity), "Cannot store a null entity");
-
-            var id = entity.Id;
-            var model = Find(id);
-            _context.Entry(model).CurrentValues.SetValues(entity);
-            _context.Entry(model).State = EntityState.Modified;
         }
 
         public virtual void Delete(T entity)
@@ -107,34 +95,6 @@ namespace Data.Repositories
 
             foreach (var record in records)
                 _objectSet.Remove(record);
-        }
-
-        public void Attach(T entity)
-        {
-            _objectSet.Attach(entity);
-        }
-
-        public void Detach(T entity)
-        {
-            _context.Entry(entity).State = EntityState.Detached;
-        }
-
-        public void SaveChanges()
-        {
-            _context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        public void Dispose(bool disposing)
-        {
-            if (!disposing || _context == null) return;
-            _context.Dispose();
-            _context = null;
         }
     }
 }

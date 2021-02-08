@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Domain.Model
+namespace Domain.Entities
 {
     public class Policies
     {
