@@ -12,9 +12,8 @@ namespace Persistence.Repositories.Interfaces
         IWebApiDbContext CurrentDbContext { get; }
         IQueryable<T> Fetch(bool track);
         IQueryable<T> GetAll(bool track);
-        T Find(int id);
-        IQueryable<T> Find(Expression<Func<T, bool>> predicate, bool track);
-        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, bool track);
+        IQueryable<T> FindAll(Expression<Func<T, bool>> predicate, bool track);
+        Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate, bool track);
         Task<IEnumerable<T>> GetAllAsync(bool track = true);
         Task<T> GetAsync(int id, bool track = true);
         void Add(T entity);

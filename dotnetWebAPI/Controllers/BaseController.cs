@@ -9,7 +9,7 @@ namespace WebAPI.Controllers
     public class BaseController : Controller
     {
         [NonAction]
-        public virtual ValidationFailedObjectResult ValidationFailed(
+        protected ValidationFailedObjectResult ValidationFailed(
             [ActionResultObjectValue] ModelStateDictionary modelState)
         {
             if(modelState == null)
@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
         }
 
         [NonAction]
-        public virtual BadRequestObjectResult BadRequest(
+        protected BadRequestObjectResult BadRequest(
             [ActionResultObjectValue] Exception e)
         {
             return new BadRequestObjectResult(new

@@ -35,12 +35,7 @@ namespace Persistence.Repositories
             return Fetch(track);
         }
 
-        public virtual T Find(int id)
-        {
-            return Fetch().FirstOrDefaultDynamic(x => $"x.Id == {id}");
-        }
-
-        public IQueryable<T> Find(Expression<Func<T, bool>> predicate, bool track = true)
+        public IQueryable<T> FindAll(Expression<Func<T, bool>> predicate, bool track = true)
         {
             return Fetch(track).Where(predicate);
         }
@@ -52,9 +47,9 @@ namespace Persistence.Repositories
                 : Fetch().Include(relatedEntity).FirstOrDefault(predicate);
         }
 
-        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, bool track)
+        public async Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate, bool track)
         {
-            return await Find(predicate, track).ToListAsync();
+            return await FindAll(predicate, track).ToListAsync();
         }
 
         public async Task<IEnumerable<T>> GetAllAsync(bool track = false)
@@ -65,7 +60,7 @@ namespace Persistence.Repositories
 
         public async Task<T> GetAsync(int id, bool track = true)
         {
-            return await Fetch(track).WhereDynamic(x => $"x.Id = {id}").FirstOrDefaultAsync();
+            return await Fetch(track).WhereDynamic(x => $"x.Id == {id}").FirstOrDefaultAsync();
         }
 
         public bool Exists(Expression<Func<T, bool>> predicate)

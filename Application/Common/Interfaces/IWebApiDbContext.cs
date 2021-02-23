@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,6 @@ namespace Application.Common.Interfaces
     {
         public DbSet<User> Users { get; set; }
         DbSet<T> Set<T>() where T : class;
-        Task<int> SaveChangesAsync();
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Application.Common.Interfaces;
 using Persistence.Repositories.Interfaces;
 
@@ -17,9 +18,9 @@ namespace Persistence.Repositories
         public IUserRepository Users
             => _userRepository ??= new UserRepository(_repoContext);
 
-        public async Task<int> SaveChangesAsync()
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            return await _repoContext.SaveChangesAsync();
+            return await _repoContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

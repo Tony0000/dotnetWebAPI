@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Persistence.Repositories.Interfaces;
 using WebAPI.Dtos.UserDtos;
@@ -27,7 +29,7 @@ namespace WebAPI.Controllers
 
         // GET: User/
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAllAsync()
         {
             var users = _repository.Users.GetAll(track:false);
             try
@@ -52,7 +54,7 @@ namespace WebAPI.Controllers
         // GET: User/5
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetAsync(int id)
         {
             var user = await _repository.Users.GetAsync(id, track:false);
             var userDto = _mapper.Map<UserReadDto>(user);
@@ -60,24 +62,26 @@ namespace WebAPI.Controllers
             return Ok(userDto);
         }
 
-
         // POST: Users
         [HttpPost]
-        public async Task<IActionResult> Post(UserUpdateDto userDto)
+        public async Task<IActionResult> PostAsync(UserCreateDto userDto, 
+            CancellationToken cancellationToken = default)
         {
             if (userDto == null)
                 return BadRequest();
 
             var user = _mapper.Map<User>(userDto);
             _repository.Users.Add(user);
-            await _repository.SaveChangesAsync();
+            await _repository.SaveChangesAsync(cancellationToken);
 
-            return Created("created", _mapper.Map<UserReadDto>(user));
+            return CreatedAtAction("Get", new {id = user.Id}, _mapper.Map<UserReadDto>(user));
         }
 
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> Put(int id, UserUpdateDto userDto)
+        public async Task<IActionResult> PutAsync(int id, 
+            UserUpdateDto userDto, 
+            CancellationToken cancellationToken = default)
         {
             if (id != userDto.Id)
                 return BadRequest();
@@ -88,19 +92,21 @@ namespace WebAPI.Controllers
                 return ValidationFailed(ModelState);
             }
 
-            var user = await _repository.Users.FindAsync(x => x.Id == id, track:true);
+            var user = await _repository.Users.GetAsync(id, track:true);
             _mapper.Map(userDto, user);
 
-            await _repository.SaveChangesAsync();
+            await _repository.SaveChangesAsync(cancellationToken);
 
             return Ok(_mapper.Map<UserReadDto>(user));
         }
 
         [HttpPatch]
         [Route("{id}")]
-        public async Task<IActionResult> Patch(int id, JsonPatchDocument<UserUpdateDto> docPatch)
+        public async Task<IActionResult> PatchAsync(int id, 
+            JsonPatchDocument<UserUpdateDto> docPatch,
+            CancellationToken cancellationToken = default)
         {
-            var storedUser = await _repository.Users.FindAsync(x => x.Id == id, track: true);
+            var storedUser = await _repository.Users.GetAsync(id, track: true);
             var userToBePatched = _mapper.Map<UserUpdateDto>(storedUser);
             
             docPatch.ApplyTo(userToBePatched, ModelState);
@@ -110,7 +116,7 @@ namespace WebAPI.Controllers
                 return ValidationFailed(ModelState);
 
             _mapper.Map(userToBePatched, storedUser);
-            await _repository.SaveChangesAsync();
+            await _repository.SaveChangesAsync(cancellationToken);
 
             return Ok(_mapper.Map<UserReadDto>(storedUser));
         }
@@ -118,12 +124,12 @@ namespace WebAPI.Controllers
         // DELETE: User/5
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
             var user = await _repository.Users.GetAsync(id);
 
             _repository.Users.Delete(user);
-            await _repository.SaveChangesAsync();
+            await _repository.SaveChangesAsync(cancellationToken);
 
             return Ok(_mapper.Map<UserReadDto>(user));
         }

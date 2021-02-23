@@ -29,7 +29,7 @@ namespace Persistence
             base.OnModelCreating(modelBuilder);
         }
 
-        public Task<int> SaveChangesAsync()
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             var currentUser = GetUser();
             var currentUserId = currentUser?.Id;
@@ -53,7 +53,7 @@ namespace Persistence
                 }
             }
 
-            return base.SaveChangesAsync();
+            return base.SaveChangesAsync(cancellationToken);
         }
 
         private User GetUser()
