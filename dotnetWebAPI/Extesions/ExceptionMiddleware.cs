@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using WebAPI.ActionResult.Model;
 
@@ -47,6 +48,15 @@ namespace WebAPI.Extesions
                 case NullReferenceException _:
                     status = HttpStatusCode.NotFound;
                     detail = "Object not found";
+                    break;
+                case DbUpdateException _:
+                    var valError = SqlExceptionHandler.ValidateUniqueConstraint(exception);
+                    if (valError != null)
+                    {
+                        status = HttpStatusCode.UnprocessableEntity;
+                        type = "NotUniqueValue";
+                        validationError = valError;
+                    }
                     break;
             }
 
