@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Persistence;
+using WebAPI.ActionFilter;
 using WebAPI.Extesions;
 
 namespace WebAPI
@@ -36,7 +37,7 @@ namespace WebAPI
         {
             services.ConfigureCors(Configuration);
             services.AddPersistence(Configuration);
-            services.ConfigureRepositories();
+            services.ConfigureFilters();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddHttpContextAccessor();
@@ -44,11 +45,15 @@ namespace WebAPI
             services.ConfigureAuthentication(Configuration);
             services.ConfigureAuthorization();
 
-            services.AddControllers().AddNewtonsoftJson(s =>
-            {
-                s.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                s.SerializerSettings.Converters.Add(new StringEnumConverter());
-            });
+            services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
+            
+            services
+                .AddControllers(options => options.Filters.Add<ValidateModel>())
+                .AddNewtonsoftJson(s =>
+                {
+                    s.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    s.SerializerSettings.Converters.Add(new StringEnumConverter());
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

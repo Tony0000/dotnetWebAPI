@@ -3,13 +3,10 @@ using System.Text;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Persistence;
-using Persistence.Repositories;
-using Persistence.Repositories.Interfaces;
+using WebAPI.ActionFilter;
 
 namespace WebAPI.Extesions
 {
@@ -29,26 +26,11 @@ namespace WebAPI.Extesions
             //});
         }
 
-        public static void ConfigureRepositories(this IServiceCollection services)
+        public static void ConfigureFilters(this IServiceCollection services)
         {
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IRepositoryFactory, RepositoryFactory>();
+            services.AddTransient(typeof(NotFoundFilter<>));
         }
-
-        public static void ConfigureSqlContext(this IServiceCollection services, 
-            IConfiguration config)
-        {
-            var connString = Environment.GetEnvironmentVariable("DB_CONNECTIONSTRING");
-
-            if (string.IsNullOrEmpty(connString))
-                connString = config.GetConnectionString("WebApiConnection");
-
-            var assemblyName = typeof(WebApiDbContext).Namespace;
-            services.AddDbContext<WebApiDbContext>(
-                opt => opt.UseSqlServer(connString, b => b.MigrationsAssembly(assemblyName))
-            );
-        }
-
+        
         public static void ConfigureAuthentication(this IServiceCollection services, 
             IConfiguration config)
         {

@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Common.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Persistence.Repositories.Interfaces;
+using WebAPI.ActionFilter;
 using WebAPI.Dtos.UserDtos;
 
 namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [ServiceFilter(typeof(NotFoundFilter<User>))]
     public class UserController : BaseController
     {
         private readonly IMapper _mapper;

@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Persistence.Repositories;
+using Persistence.Repositories.Interfaces;
 
 namespace Persistence
 {
@@ -19,7 +21,16 @@ namespace Persistence
 
             services.AddScoped<IWebApiDbContext>(provider => provider.GetService<WebApiDbContext>());
 
+            services.ConfigureRepositories();
+            
             return services;
         }
+        
+        private static void ConfigureRepositories(this IServiceCollection services)
+        {
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRepositoryFactory, RepositoryFactory>();
+        }
+
     }
 }
